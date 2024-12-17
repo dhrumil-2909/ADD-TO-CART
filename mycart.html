@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add to Cart</title>
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+    }
+    h1 {
+        text-align: center;
+    }
+    .container {
+        max-width: 500px;
+        margin: auto;
+        background: white;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .product {
+        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .product img {
+        width: 200px;
+        height: 150px;
+        margin-right: 10px;
+        justify-content: center;
+        align-items: center;
+    }
+    .add-to-cart {
+        width: 200px;
+        height: 35px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+    .add-to-cart:hover {
+        background-color: #218838;
+    }
+    .cart {
+        margin-top: 30px;
+        border-top: 1px solid #ccc;
+        padding-top: 10px;
+    }
+    .cart-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 5px;
+    }
+    .delete-button {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+    .delete-button:hover {
+        background-color: #c82333;
+    }
+</style>
+</head>
+<body>
+    <div class="container">
+        <h1>Shopping Cart Example</h1>
+        <div class="product">
+            <img src="cyber.png" alt="Product 1">
+            <h2>Cyber Security Course</h2>
+            <p>Price: $200</p>
+            <button class="add-to-cart" data-name="Cyber Security Course" data-price="200">Add to Cart</button>
+        </div>
+        <div class="product">
+            <img src="ai.jpg" alt="Product 2">
+            <h2>AI Course</h2>
+            <p>Price: $150</p>
+            <button class="add-to-cart" data-name="AI Course" data-price="150">Add to Cart</button>
+        </div>
+        <div class="cart">
+            <h2>Shopping Cart</h2>
+            <ul id="cart-items"></ul>
+            <p id="total-price">Total: $0</p>
+        </div>
+    </div>
+    <script>
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let totalPrice = parseFloat(localStorage.getItem('totalPrice')) ;
+
+        function updateCart() {
+            let cartItems = document.getElementById('cart-items');
+            cartItems.innerHTML = ''; 
+
+            cart.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.className = 'cart-item';
+                li.innerHTML = `${item.name} - $${item.price} <button class="delete-button" data-index="${index}">Delete</button>`;
+                cartItems.appendChild(li);
+            });
+
+            document.getElementById('total-price').textContent = `Total: $${totalPrice}`;
+
+            
+            localStorage.setItem('cart', JSON.stringify(cart));
+            localStorage.setItem('totalPrice', totalPrice);
+
+            
+            console.log("Updated Cart:", cart);
+            console.log("Total Price:", totalPrice);
+
+            
+            document.querySelectorAll('.delete-button').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    let index = e.target.getAttribute('data-index');
+                    totalPrice -= cart[index].price; 
+                    cart.splice(index, 1); 
+                    updateCart(); 
+                });
+            });
+        }
+
+    
+        document.querySelectorAll('.add-to-cart').forEach(button => {
+            button.addEventListener('click', () => {
+                let productName = button.getAttribute('data-name');
+                let productPrice = parseFloat(button.getAttribute('data-price'));
+
+                cart.push({ name: productName, price: productPrice });
+                totalPrice += productPrice;
+            
+                updateCart();
+            });
+        });
+        updateCart();
+    </script>
+</body>
+</html>
